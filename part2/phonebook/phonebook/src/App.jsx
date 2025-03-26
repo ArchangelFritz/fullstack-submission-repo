@@ -2,16 +2,39 @@ import { useState } from 'react'
 import Search from './components/Search'
 import Display from './components/Display'
 import Input from './components/Input'
+import { useEffect } from 'react'
+import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-1234567', "id": 0 }
   ]) 
+  const [rehook, setRehook] = useState(0)
+  const hook = () => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setFilteredPersons(response.data)
+        setPersons(response.data)
+
+      })
+  }
+  
+  useEffect(hook, [rehook])
+
+
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filteredPersons, setFilteredPersons] = useState(persons)
   const [searchTerm, setSearchTerm] = useState('')
   
+  useEffect(() => {
+    console.log('Current persons:', persons)
+    console.log('Current filteredPersons:', filteredPersons)
+}, [persons, filteredPersons])
+
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
